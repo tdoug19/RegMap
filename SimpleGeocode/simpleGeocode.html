@@ -39,16 +39,39 @@ function initialize() {
 
 		reader.onload = function(e) {
 			
-			var addressBuffer = reader.result;
-			//var result = $.csv.toArrays(addressBuffer);
-			alert('Loaded');
+			//var addressText = reader.result;
+			//var result = $.csv.toArrays(addressText);
+			//alert('Loaded');
 			//alert(addressBuffer[0]);
-			console.log(addressBuffer[0]); // outputs: 
+			//console.log(address[0]); // outputs: 
+			var csv = event.target.result;
+			processData(csv);
 
 		}
 
-		reader.readAsArrayBuffer(file);  
+		reader.readAsText(file);  
+		
+
+		function processData(csv) {
+		
+		  var allTextLines = csv.split(/\r\n|\n/);
+		  var lines = [];
+		  for (var i=0; i<allTextLines.length; i++) {
+			  var data = allTextLines[i].split(';');
+				  var tarr = [];
+				  for (var j=0; j<data.length; j++) {
+					  tarr.push(data[j]);
+				  }
+				  lines.push(tarr);
+		  }
+		  alert('Loaded');
+		  console.log(lines);
+		}
+		
+		
   });
+  
+  
   
   
   
