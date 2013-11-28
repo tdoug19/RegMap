@@ -26,14 +26,14 @@
 	<script src="jquery.csv-0.71.js"></script>
 
     <script>
-var geocoder;
+
 var map;
 var lazersLocations = new Array();
 var lazersBirthDates = new Array();
 var lazersGeoCode = new Array();
 //var result = new Array();
 var result = [
-    [], [] // two arrays
+    [], [] // 2d array
 ];
   
 function initialize() {
@@ -72,27 +72,21 @@ function processLazers()
 	for(i=0; i<result.length; i++)
 	{
 		lazersLocations[i] = result[i][0];
-
+		lazersBirthDates = result[i][1];
+		lazersGeoCode = result[i][2];
 	}
-	
-    //geoCodeLazers(lazersLocations);
 	
 }
 
-function geoCodeLazers(params)
+function mapLazers()
 {
-	for(i=0;i<params.length;i++){
-		geocoder.geocode( { 'address': params[i]}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-			  map.setCenter(results[0].geometry.location);
-			  var marker = new google.maps.Marker({
-				  map: map,
-		//          position: results[0].geometry.location
-			  });
-			  lazersGeoCode[i] = results[0];
-			} else {
-			  alert('Geocode was not successful for the following reason: ' + status);
-			} 	
+	for(i=0; i<lazersGeoCode.length; i++)
+	{
+	    //This is not working .. 
+		var myLatlng = lazersGeoCode[i];
+		var marker = new google.maps.Marker({
+		position: myLatlng,
+		map: map
 		});
 	}
 }
@@ -104,6 +98,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
   </head>
   <body>
     <div id="panel">
+	  <input type="button" id="processLazers" value="mapLazers"  onclick="mapLazers();">
 	  <input type="file" id="fileInput"  />
 	  <output id="list"></output>
 
