@@ -72,8 +72,8 @@ function processLazers()
 	for(i=0; i<result.length; i++)
 	{
 		lazersLocations[i] = result[i][0];
-		lazersBirthDates = result[i][1];
-		lazersGeoCode = result[i][2];
+		lazersBirthDates[i] = result[i][1];
+		lazersGeoCode[i] = result[i][2];
 	}
 	
 }
@@ -81,13 +81,16 @@ function processLazers()
 function mapLazers()
 {
 	for(i=0; i<lazersGeoCode.length; i++)
+	//for(i=0; i<1; i++)
 	{
-	    //This is not working .. 
-		var myLatlng = lazersGeoCode[i];
+		var bits = lazersGeoCode[i].split(/,\s*/);
+		myLatlng = new google.maps.LatLng(parseFloat(bits[0]), parseFloat(bits[1]));
+	
 		var marker = new google.maps.Marker({
-		position: myLatlng,
-		map: map
+			position: myLatlng,
+			
 		});
+		marker.setMap(map);
 	}
 }
 
