@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Geocoding service</title>
+    <title>RMSL Registration Map</title>
     <style>
       html, body, #map-canvas {
         height: 100%;
@@ -26,11 +26,27 @@
 	<script src="jquery.csv-0.71.js"></script>
 
     <script>
-
+var poly
 var map;
+var lazersZoneActive = false;
+var lazerZoneCoordinates = new Array();
+var lazerZoneBoundary;
+var lazerCoordsCount = 0;
+var lazersZone;
+
+
+var regLocations = new Array();
+var regBirthDates = new Array();
+var regGeoCode = new Array();
 var lazersLocations = new Array();
 var lazersBirthDates = new Array();
 var lazersGeoCode = new Array();
+var saintsLocations = new Array();
+var saintsBirthDates = new Array();
+var saintsGeoCode = new Array();
+
+
+
 //var result = new Array();
 var result = [
     [], [] // 2d array
@@ -41,6 +57,7 @@ function initialize() {
   
   var fileInput = document.getElementById('fileInput');
   
+  
   fileInput.addEventListener('change', function(e) {
 		var file = fileInput.files[0];
 		var reader = new FileReader();
@@ -50,7 +67,8 @@ function initialize() {
 			var csv = event.target.result;
 			result = $.csv.toArrays(csv);
 			
-			processLazers();
+			markRegistrations();
+			//processLazers();
 
 		}
 		reader.readAsText(file);  
@@ -64,35 +82,108 @@ function initialize() {
     center: latlng
   }
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  
+  var polyOptions = {
+    strokeColor: '#000000',
+    strokeOpacity: 1.0,
+    strokeWeight: 3
+  };
+  lazerZoneBoundary = new google.maps.Polyline(polyOptions);
+  
+  lazerZoneBoundary.setMap(map);
+
+  // Add a listener for the click event
+  google.maps.event.addListener(map, 'click', addLatLng);
+  
+    
+}
+
+/**
+ * Handles click events on a map, and adds a new point to the Polyline.
+ * @param {google.maps.MouseEvent} event
+ */
+function addLatLng(event) {
+
+  var path = lazerZoneBoundary.getPath();
+
+    // Because path is an MVCArray, we can simply append a new coordinate
+    // and it will automatically appear.
+-   path.push(event.latLng);
+  // Add a new marker at the new plotted point on the polyline.
+  var marker = new google.maps.Marker({
+    position: event.latLng,
+    title: '#' + path.getLength(),
+    map: map
+  });
+   
+  
+  if(lazersZoneActive)
+  {
+	
+    lazerZoneCoordinates[lazerCoordsCount] = new google.maps.LatLng(event.latLng.ob, event.latLng.pb);
+	++lazerCoordsCount;
+  }
+}
+
+function createLazersZone()
+{
+	lazersZoneActive = true;
+	
+}
+
+function setZoneDone()
+{
+	if(lazersZoneActive)
+	{
+		//Set the last location to the first to complete the polygon
+		lazerZoneCoordinates[lazerCoordsCount-1] = lazerZoneCoordinates[0];
+		// Construct the polygon.
+		lazersZone = new google.maps.Polygon({
+		paths: lazerZoneCoordinates,
+			strokeColor: '#FFFF00',
+			strokeOpacity: 0.8,
+			strokeWeight: 3,
+			fillColor: '#FFFF00',
+			fillOpacity: 0.15
+		  });
+
+		lazersZone.setMap(map); 
+		lazersZoneActive = false;
+		lazerZoneBoundary.setMap(null);
+	}
+	
+	
 }
 
 
-function processLazers()
+function markRegistrations()
 {
 	for(i=0; i<result.length; i++)
 	{
-		lazersLocations[i] = result[i][0];
-		lazersBirthDates[i] = result[i][1];
-		lazersGeoCode[i] = result[i][2];
+		regLocations[i] = result[i][0];
+		regBirthDates[i] = result[i][1];
+		regGeoCode[i] = result[i][2];
 	}
 	
 }
 
-function mapLazers()
+function mapRegistrations()
 {
-	for(i=0; i<lazersGeoCode.length; i++)
+	for(i=0; i<regGeoCode.length; i++)
 	//for(i=0; i<1; i++)
 	{
-		var bits = lazersGeoCode[i].split(/,\s*/);
+		var bits = regGeoCode[i].split(/,\s*/);
 		myLatlng = new google.maps.LatLng(parseFloat(bits[0]), parseFloat(bits[1]));
-	
+
 		var marker = new google.maps.Marker({
-			position: myLatlng,
-			
-		});
+            position: myLatlng,
+			icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+
 		marker.setMap(map);
 	}
 }
+
 
 
 google.maps.event.addDomListener(window, 'load', initialize);
@@ -101,8 +192,10 @@ google.maps.event.addDomListener(window, 'load', initialize);
   </head>
   <body>
     <div id="panel">
-	  <input type="button" id="processLazers" value="mapLazers"  onclick="mapLazers();">
-	  <input type="file" id="fileInput"  />
+	  <input type="file" id="fileInput">
+	  <input type="button" id="mapRegistrations" value="mapRegistrations"  onclick="mapRegistrations();">
+	  <input type="button" id="createLazersZone" value="createLazersZone"  onclick="createLazersZone();">
+	  <input type="button" id="setZoneDone" value="setZoneDone"  onclick="setZoneDone();">
 	  <output id="list"></output>
 
     </div>

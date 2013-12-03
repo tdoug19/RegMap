@@ -75,25 +75,32 @@ function processLazers()
 
 	}
 	
-    //geoCodeLazers(lazersLocations);
+    geoCodeLazers(lazersLocations);
 	
 }
 
 function geoCodeLazers(params)
 {
+    var done = 0;
 	for(i=0;i<params.length;i++){
-		geocoder.geocode( { 'address': params[i]}, function(results, status) {
-			if (status == google.maps.GeocoderStatus.OK) {
-			  map.setCenter(results[0].geometry.location);
-			  var marker = new google.maps.Marker({
-				  map: map,
-		//          position: results[0].geometry.location
-			  });
-			  lazersGeoCode[i] = results[0];
+	//for(i=0;i<1;i++){
+		geocoder.geocode( { 'address': params[i]}, function(results, status) 
+		{
+			if (status == google.maps.GeocoderStatus.OK) 
+			{
+			  lazersGeoCode[i] = results[0].geometry.location;
+			  console.log(lazersGeoCode[i]);
+			  done = 1;
 			} else {
 			  alert('Geocode was not successful for the following reason: ' + status);
+			  done = 1;
 			} 	
 		});
+		
+		while(!done)
+		{
+		
+		}
 	}
 }
 
