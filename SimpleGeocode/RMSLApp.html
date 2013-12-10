@@ -234,8 +234,9 @@ function addLatLng(event)
 				map: map
 				});
 			}
+			
 			//zones[i].coordinates[zones[i].coordsCount] = new google.maps.LatLng(event.latLng.pb, event.latLng.qb);
-			zones[i].coordinates[zones[i].coordsCount] = new google.maps.LatLng(event.latLng.nb, event.latLng.ob);
+			zones[i].coordinates[zones[i].coordsCount] = new google.maps.LatLng(event.latLng.lat(), event.latLng.lng());
 			
 			++zones[i].coordsCount;
 		}
