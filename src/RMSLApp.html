@@ -37,11 +37,11 @@ var polyOptions = {
 	};
 
 var blastball = "2010";
-var mite_1 = "2009";
+var beginner_1 = "2009";
 var novice_1 = "2008";
 var novice_2 = "2007";
-var beginner_1 = "2006";
-var beginner_2 = "2005";
+var mite_1 = "2006";
+var mite_2 = "2005";
 var squirt_1 = "2004";
 var squirt_2 = "2003";
 var peewee_1 = "2002";
@@ -347,36 +347,36 @@ function setZoneDone()
 	
 	regWindow.setContent("<p>" + "Lazers: " + zones[0].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[0].divisionNumbers[0]  
-						+ " Mite: " + zones[0].divisionNumbers[1]  
+						+ " Beginner: " + zones[0].divisionNumbers[1]  
 						+ " Novice: " + zones[0].divisionNumbers[2]  
-						+ " Beginner: " + zones[0].divisionNumbers[3] + "<br />" 
+						+ " Mite: " + zones[0].divisionNumbers[3] + "<br />" 
 						+ "Squirt: " + zones[0].divisionNumbers[4]  
 						+ " Peewee: " + zones[0].divisionNumbers[5] 
 						+ " Bantam: " + zones[0].divisionNumbers[6] + "<br />"
 						+ "Midget: " + zones[0].divisionNumbers[7] + "<br />" + "<br />" 
 						+ "Saints: " + zones[1].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[1].divisionNumbers[0]  
-						+ " Mite: " + zones[1].divisionNumbers[1] 
+						+ " Beginner: " + zones[1].divisionNumbers[1] 
 						+ " Novice: " + zones[1].divisionNumbers[2]  
-						+ " Beginner: " + zones[1].divisionNumbers[3] + "<br />" 
+						+ " Mite: " + zones[1].divisionNumbers[3] + "<br />" 
 						+ "Squirt: " + zones[1].divisionNumbers[4] 
 						+ " Peewee: " + zones[1].divisionNumbers[5]
 						+ " Bantam: " + zones[1].divisionNumbers[6] + "<br />" 
 						+ "Midget: " + zones[1].divisionNumbers[7] + "<br />" + "<br />" 
 						+ "Royals: " + zones[2].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[2].divisionNumbers[0]  
-						+ " Mite: " + zones[2].divisionNumbers[1] 
+						+ " Beginner: " + zones[2].divisionNumbers[1] 
 						+ " Novice: " + zones[2].divisionNumbers[2]  
-						+ " Beginner: " + zones[2].divisionNumbers[3] + "<br />" 
+						+ " Mite: " + zones[2].divisionNumbers[3] + "<br />" 
 						+ "Squirt: " + zones[2].divisionNumbers[4] 
 						+ " Peewee: " + zones[2].divisionNumbers[5]
 						+ " Bantam: " + zones[2].divisionNumbers[6] + "<br />" 
 						+ "Midget: " + zones[2].divisionNumbers[7] + "<br />" + "<br />" 
 						+ "Falcons: " + zones[3].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[3].divisionNumbers[0]  
-						+ " Mite: " + zones[3].divisionNumbers[1] 
+						+ " Beginner: " + zones[3].divisionNumbers[1] 
 						+ " Novice: " + zones[3].divisionNumbers[2]  
-						+ " Beginner: " + zones[3].divisionNumbers[3] + "<br />" 
+						+ " Mite: " + zones[3].divisionNumbers[3] + "<br />" 
 						+ "Squirt: " + zones[3].divisionNumbers[4] 
 						+ " Peewee: " + zones[3].divisionNumbers[5]
 						+ " Bantam: " + zones[3].divisionNumbers[6] + "<br />" 
@@ -408,21 +408,20 @@ function determineZones()
 							zones[i].divisionNumbers[0]++;
 						
 						break;
-						
-						case 	mite_1:
+
+						case 	beginner_1:
 							zones[i].divisionNumbers[1]++;
-						
 						break;
-						
+
 						case 	novice_1:
 						case 	novice_2:
 							zones[i].divisionNumbers[2]++;
-						
 						break;
-
-						case 	beginner_1:
-						case 	beginner_2:
+							
+						case 	mite_1:
+						case	mite_2:
 							zones[i].divisionNumbers[3]++;
+						
 						break;
 						
 						case 	squirt_1:
