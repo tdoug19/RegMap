@@ -24,4 +24,33 @@ public class Player {
 		
 	}
 
+	
+	public String getName()	{
+		return name;
+			
+	}
+	
+	
+	public String getAddress()	{
+		
+		return address;
+	}
+	
+	
+	public void setLongitude(Double longitude){
+		this.longitude = longitude;
+		
+	}
+	
+	public void setLatitude(Double latitude){
+		this.latitude = latitude;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 }
