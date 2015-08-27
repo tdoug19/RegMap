@@ -3,6 +3,10 @@
  */
 package com.TrevorDouglas;
 
+import java.util.Date;
+
+import com.google.code.geocoder.model.LatLng;
+
 /**
  * @author tdouglas
  *
@@ -10,17 +14,18 @@ package com.TrevorDouglas;
 public class Player {
 	private String name;
 	private String address;
-	private int yearOfBirth;
+	private Date dateOfBirth;
 	private double longitude, latitude;
+	private LatLng latitudeLongitude;
 	
 	
 	
-	public Player(String name, String address, int yearOfBirth)
+	public Player(String name, String address, Date dateOfBirth)
 	{
 		
 		this.name = name;
 		this.address = address;
-		this.yearOfBirth = yearOfBirth;
+		this.dateOfBirth = dateOfBirth;
 		
 	}
 
@@ -30,11 +35,30 @@ public class Player {
 			
 	}
 	
+	public Date getDate()	{
+		return dateOfBirth;
+	}
 	
 	public String getAddress()	{
 		
 		return address;
 	}
+	
+	
+	public void setLatLng(LatLng latitudeLongitude)
+	{
+		this.latitudeLongitude = latitudeLongitude;
+		
+	}
+	
+	
+	public LatLng getLatLng()
+	{
+		return latitudeLongitude;
+		
+	}
+	
+	
 	
 	
 	public void setLongitude(Double longitude){

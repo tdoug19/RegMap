@@ -4,7 +4,16 @@
 package com.TrevorDouglas;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+
+import com.google.code.geocoder.model.LatLng;
+
 
 
 /**
@@ -13,9 +22,6 @@ import java.util.ArrayList;
  */
 public class Utilities {
 
-	
-	
-	
 		public static boolean saveStringToFile(String fileName, String stringToSave){
 			boolean saved = false;
 			
@@ -39,17 +45,11 @@ public class Utilities {
 				ex.printStackTrace();
 			}
 			
-			
-			
-			
 			return saved;
-			
 			
 		}
 		
-		
-		
-		
+
 		public static String getStringFromFile(){
 			
 			return null;
@@ -72,8 +72,34 @@ public class Utilities {
 					s = br.readLine();  // Chuck out the first line header
 					while((s = br.readLine()) != null){
 						
-						playerList.add(extractPlayer(s));
+						Player p;
+						try {
+							p = extractPlayer(s);
+							boolean addPlayer = true;
+							for(int i= 0; i<playerList.size(); ++i)
+							{
+								if (p.getName().equalsIgnoreCase(playerList.get(i).getName()))
+								{
+									//We have a match now see if they have moved
+						//			System.out.println("match");
+									//for now break and move to the next line.
+									addPlayer = false;
+									break;
+								}
+							}
+									
+							if(addPlayer){
+								playerList.add(p);
+							}
+							
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+							
+						
 					}
+
 				}
 				finally{
 					br.close();
@@ -109,18 +135,39 @@ public class Utilities {
 					s = br.readLine();  // Chuck out the first line header
 					while((s = br.readLine()) != null){
 						
-						
-						Player p = extractPlayer(s);
-						for(int i= 0; i<playerList.size(); ++i)
-						{
-							if (p.getName().equals(playerList.get(i).getName()))
+						Player p;
+						try {
+							p = extractPlayerFromOldData(s);
+							boolean addPlayer = true;
+							for(int i= 0; i<playerList.size(); ++i)
 							{
-								System.out.println("match");
-								
+								if (p.getName().equalsIgnoreCase(playerList.get(i).getName()))
+								{
+									
+									//We have a match... check to see if there is a latitude or longitude for them.
+									if(playerList.get(i).getLatLng() == null && p.getLatLng() != null)
+									{
+										playerList.get(i).setLatLng(p.getLatLng());
+									}
+									
+									//We have a match now see if they have moved
+						//			System.out.println("match");
+									//for now break and move to the next line.
+									addPlayer = false;
+									break;
+								}
 							}
+									
+							if(addPlayer){
+								playerList.add(p);
+							}
+							
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
+							
 						
-
 					}
 				}
 				finally{
@@ -138,41 +185,92 @@ public class Utilities {
 			
 			
 			
-			return false;
+			return true;
 			
 			
 		}
 		
 		
+		//This should be a generic method... but use this for now.
+		public static boolean saveMergedRegistrantsToFile(String fileName, ArrayList<Player> playerList){
+			boolean saved = false;
+			writeToCSV(fileName, playerList);
+			
+			
+			return saved;
+			
+		}
+				
+		
 		//A player may not have lat and long with it.
-		private static Player extractPlayer(String s)
+		private static Player extractPlayerFromOldData(String s) throws ParseException
 		{
 			String[] ar=s.split(",");
 			
-			Player p = new Player(ar[0] + " " + ar[1], ar[7], Integer.parseInt(ar[2]));
+			DateFormat format = new SimpleDateFormat("yyyy", Locale.ENGLISH);
+			Date date = format.parse(ar[2]);
+			Player p = new Player(ar[0] + " " + ar[1], ar[7], date);
+
 			
-			
-			if(ar.length < 12)
+			if(ar.length > 12)
 			
 			//Do we have lat and long elements... check..
 			{
 			
 				String lat = ar[12];
-				String newLat = lat.replace("\"", "");
+				lat = lat.replace("\"", "");
 				
 				String longitude = "\"" + ar[13];
-				String newLong = longitude.replace("\"", "");						
+				longitude = longitude.replace("\" ", "");						
+				longitude = longitude.replace("\"", "");
 				
-				p.setLatitude(Double.parseDouble(newLat));
-				p.setLongitude(Double.parseDouble(newLong));
+				LatLng latitudeLongitude = new LatLng();
+				latitudeLongitude.setLat(new BigDecimal(lat));
+				latitudeLongitude.setLng(new BigDecimal(longitude));
+				
+				p.setLatLng(latitudeLongitude);
+				
 			}
 			
 			return p;
 			
+		}
+		
+
+		//A player may not have lat and long with it.
+		private static Player extractPlayer(String s) throws ParseException
+		{
+			String[] ar=s.split(",");
 			
+			DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+			Date date = format.parse(ar[4]);
+
+			Player p = new Player(ar[1] + " " + ar[2], ar[7], date);
+			
+		
+			if(ar.length > 16)
+			
+			//Do we have lat and long elements... check..
+			{
+			
+				String lat = ar[12];
+				lat = lat.replace("\"", "");
+				
+				String longitude = "\"" + ar[13];
+				longitude = longitude.replace("\" ", "");						
+				longitude = longitude.replace("\"", "");
+				
+				LatLng latitudeLongitude = new LatLng();
+				latitudeLongitude.setLat(new BigDecimal(lat));
+				latitudeLongitude.setLng(new BigDecimal(longitude));
+				
+				p.setLatLng(latitudeLongitude);
+				
+			}
+			
+			return p;
 			
 		}
-
 		
 		
 		
@@ -181,4 +279,54 @@ public class Utilities {
 		
 		
 		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		private static final String CSV_SEPARATOR = ",";
+		private static void writeToCSV(String fileName, ArrayList<Player> playerList)
+		{
+			try
+		    {
+				BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"));
+		        for (Player player : playerList)
+		        {
+		        	StringBuffer oneLine = new StringBuffer();
+		             
+		            oneLine.append(player.getName());
+		            oneLine.append(CSV_SEPARATOR);
+		            oneLine.append(player.getDate());
+		            oneLine.append(CSV_SEPARATOR);
+		            oneLine.append(player.getAddress());
+		            oneLine.append(CSV_SEPARATOR);
+		            if (player.getLatLng() != null)
+		            {
+		            	oneLine.append(player.getLatLng().getLat());
+		            	oneLine.append(CSV_SEPARATOR);
+		            	oneLine.append(player.getLatLng().getLng());
+		            }
+		            
+             
+	                bw.write(oneLine.toString());
+	                bw.newLine();
+	            }
+	            bw.flush();
+	            bw.close();
+	       }
+		   catch (UnsupportedEncodingException e) {}
+		   catch (FileNotFoundException e){}
+		   catch (IOException e){}
+		}
 }
