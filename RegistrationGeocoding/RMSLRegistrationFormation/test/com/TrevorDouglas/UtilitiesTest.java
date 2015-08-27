@@ -36,10 +36,10 @@ public class UtilitiesTest {
 		
 		
 		//ok now.. lets request some geocodes
-		for(int i = 0; i<10; ++i)
+		for(int i = 0; i<20; ++i)
 		{
-			UtilsGeo.requestGeoCodesFromPlayeList(playerList);
 			System.out.println("Iteration: " + i + " requesting Geocodes");
+			UtilsGeo.requestGeoCodesFromPlayeList(playerList);
 		}
 
 		boolean result = Utilities.saveMergedRegistrantsToFile("testout.csv", playerList);

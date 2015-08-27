@@ -245,7 +245,7 @@ public class Utilities {
 			DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
 			Date date = format.parse(ar[4]);
 
-			Player p = new Player(ar[1] + " " + ar[2], ar[7], date);
+			Player p = new Player(ar[1] + " " + ar[2], ar[7], date, ar[8]);
 			
 		
 			if(ar.length > 16)

@@ -17,18 +17,29 @@ public class Player {
 	private Date dateOfBirth;
 	private double longitude, latitude;
 	private LatLng latitudeLongitude;
+	private String postalCode;
 	
 	
 	
+	public Player(String name, String address, Date dateOfBirth, String postalCode)
+	{
+		
+		this.name = name;
+		this.address = address;
+		this.dateOfBirth = dateOfBirth;
+		this.postalCode = postalCode;
+		
+	}
+
 	public Player(String name, String address, Date dateOfBirth)
 	{
 		
 		this.name = name;
 		this.address = address;
 		this.dateOfBirth = dateOfBirth;
+		this.postalCode = null;
 		
 	}
-
 	
 	public String getName()	{
 		return name;
@@ -44,6 +55,9 @@ public class Player {
 		return address;
 	}
 	
+	public String getPostalCode() {
+		return postalCode;
+	}
 	
 	public void setLatLng(LatLng latitudeLongitude)
 	{

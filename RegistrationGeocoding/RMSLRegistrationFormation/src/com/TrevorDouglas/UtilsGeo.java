@@ -48,7 +48,8 @@ public class UtilsGeo {
 		{
 			if(playerList.get(i).getLatLng() == null)
 			{
-				Float[] coords = performGeoCoding(playerList.get(i).getAddress() + ", Regina");	
+				Float[] coords = performGeoCoding(playerList.get(i).getAddress() + ", " + 
+						"Regina");	
 				if(coords != null)
 				{
 				
