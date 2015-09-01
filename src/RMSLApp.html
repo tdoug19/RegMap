@@ -36,74 +36,50 @@ var polyOptions = {
 		strokeWeight: 3
 	};
 
-var blastball = "2010";
-var beginner_1 = "2009";
-var novice_1 = "2008";
-var novice_2 = "2007";
-var mite_1 = "2006";
-var mite_2 = "2005";
-var squirt_1 = "2004";
-var squirt_2 = "2003";
-var peewee_1 = "2002";
-var peewee_2 = "2001";
-var bantam_1 = "2000";
-var bantam_2 = "1999";
-var midget_1 = "1998";
-var midget_2 = "1997";
+var blastball = "2011";
+var beginner_1 = "2010";
+var novice_1 = "2009";
+var novice_2 = "2008";
+var mite_1 = "2007";
+var mite_2 = "2006";
+var squirt_1 = "2005";
+var squirt_2 = "2004";
+var peewee_1 = "2003";
+var peewee_2 = "2002";
+var bantam_1 = "2001";
+var bantam_2 = "2000";
+var midget_1 = "1999";
+var midget_2 = "1998";
 
 
 //Zone Vars
-var lazers = {
+var zone1 = {
 	active: false, 				//Indicates if we are building that zone or not.
 	coordinates: new Array(),		//Keeps track of the zone coords
 	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
 	coordsCount: 0,				// Keeps track of how many points outline the zone
-	shape: null,							//Polygon representing the lazers zone.
-	locations: new Array(),		//Keeps track of regs in lazers zone
+	shape: null,							//Polygon representing the zone1.
+	locations: new Array(),		//Keeps track of regs in zone1
 	birthDates: new Array(),
 	divisionNumbers: new Array(),
-	geoCode: new Array,           //Lat and Lng of each registrant of Lazers
-	name: "Lazers"
+	geoCode: new Array,           //Lat and Lng of each registrant of zone 1
+	name: "Zone 1"
 	};
 
-var saints = {
+
+var zone2 = {
 	active: false, 				//Indicates if we are building that zone or not.
 	coordinates: new Array(),		//Keeps track of the zone coords
 	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
 	coordsCount: 0,				// Keeps track of how many points outline the zone
 	shape: null,							//Polygon representing the lazers zone.
-	locations: new Array(),		//Keeps track of regs in lazers zone
+	locations: new Array(),		//Keeps track of regs in zone 1
 	birthDates: new Array(),
 	divisionNumbers: new Array(),
-	geoCode: new Array,           //Lat and Lng of each registrant of Lazers
-	name: "Lazers"
+	geoCode: new Array,           //Lat and Lng of each registrant of Zone 1
+	name: "Zone 2"
 	};	
 
-var royals = {
-	active: false, 				//Indicates if we are building that zone or not.
-	coordinates: new Array(),		//Keeps track of the zone coords
-	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
-	coordsCount: 0,				// Keeps track of how many points outline the zone
-	shape: null,							//Polygon representing the lazers zone.
-	locations: new Array(),		//Keeps track of regs in lazers zone
-	birthDates: new Array(),
-	divisionNumbers: new Array(),
-	geoCode: new Array,           //Lat and Lng of each registrant of Lazers
-	name: "Lazers"
-	};	
-
-var falcons = {
-	active: false, 				//Indicates if we are building that zone or not.
-	coordinates: new Array(),		//Keeps track of the zone coords
-	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
-	coordsCount: 0,				// Keeps track of how many points outline the zone
-	shape: null,							//Polygon representing the lazers zone.
-	locations: new Array(),		//Keeps track of regs in lazers zone
-	birthDates: new Array(),
-	divisionNumbers: new Array(),
-	geoCode: new Array,           //Lat and Lng of each registrant of Lazers
-	name: "Lazers"
-	};	
 
 	
 var zones = new Array();               //This array will hold each zone info.
@@ -117,10 +93,8 @@ var regWindow;
 
 
 
-var contentString = "Lazers : 0" + 
-					"  Saints : 0" + 
-					"  Royals : 0" + 
-					"  Falcons : 0" ; 
+var contentString = "Zone 1 : 0" + 
+					"  Zone 2 : 0" ; 
 
 
 var result = [
@@ -142,10 +116,9 @@ function initialize() {
 					
 	alert(instructions);
  
-	zones[0] = lazers;
-	zones[1] = saints;
-	zones[2] = royals;
-	zones[3] = falcons;
+	zones[0] = zone1;
+	zones[1] = zone2;
+	
 	
 	//Initialize the count for each division Numbers
 	for (var i=0; i<zones.length; i++)
@@ -244,29 +217,18 @@ function addLatLng(event)
 	
 }
 
-function createLazersZone()
+function createZone1()
 {
 	zones[0].active = true;
 	
 }
 
-function createSaintsZone()
+function createZone2()
 {
 	zones[1].active = true;
 	
 }
 
-function createRoyalsZone()
-{
-	zones[2].active = true;
-	
-}
-
-function createFalconsZone()
-{
-	zones[3].active = true;
-	
-}
 
 
 function setZoneDone()
@@ -297,17 +259,6 @@ function setZoneDone()
 				case 1:
 					zones[i].shape = new google.maps.Polygon({
 						paths: zones[i].coordinates,
-						strokeColor: '#FF0000',
-						strokeOpacity: 0.8,
-						strokeWeight: 3,
-						fillColor: '#FF0000',
-						fillOpacity: 0.15
-						});
-				break;
-						
-				case 2:
-					zones[i].shape = new google.maps.Polygon({
-						paths: zones[i].coordinates,
 						strokeColor: '#0000FF',
 						strokeOpacity: 0.8,
 						strokeWeight: 3,
@@ -317,21 +268,7 @@ function setZoneDone()
 
 				break;
 
-				case 3:
-					zones[i].shape = new google.maps.Polygon({
-						paths: zones[i].coordinates,
-						strokeColor: '#CCFFFF',
-						strokeOpacity: 0.8,
-						strokeWeight: 3,
-						fillColor: '#CCFFFF',
-						fillOpacity: 0.15
-						});
-
-				break;
-
-
-
-
+				
 			}
 			
 			
@@ -345,7 +282,7 @@ function setZoneDone()
 	}
 	
 	
-	regWindow.setContent("<p>" + "Lazers: " + zones[0].geoCode.length + "<br />" 
+	regWindow.setContent("<p>" + ":Zone1 " + zones[0].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[0].divisionNumbers[0]  
 						+ " Beginner: " + zones[0].divisionNumbers[1]  
 						+ " Novice: " + zones[0].divisionNumbers[2]  
@@ -354,7 +291,7 @@ function setZoneDone()
 						+ " Peewee: " + zones[0].divisionNumbers[5] 
 						+ " Bantam: " + zones[0].divisionNumbers[6] + "<br />"
 						+ "Midget: " + zones[0].divisionNumbers[7] + "<br />" + "<br />" 
-						+ "Saints: " + zones[1].geoCode.length + "<br />" 
+						+ "Zone2: " + zones[1].geoCode.length + "<br />" 
 						+ "Blastball: " + zones[1].divisionNumbers[0]  
 						+ " Beginner: " + zones[1].divisionNumbers[1] 
 						+ " Novice: " + zones[1].divisionNumbers[2]  
@@ -363,24 +300,6 @@ function setZoneDone()
 						+ " Peewee: " + zones[1].divisionNumbers[5]
 						+ " Bantam: " + zones[1].divisionNumbers[6] + "<br />" 
 						+ "Midget: " + zones[1].divisionNumbers[7] + "<br />" + "<br />" 
-						+ "Royals: " + zones[2].geoCode.length + "<br />" 
-						+ "Blastball: " + zones[2].divisionNumbers[0]  
-						+ " Beginner: " + zones[2].divisionNumbers[1] 
-						+ " Novice: " + zones[2].divisionNumbers[2]  
-						+ " Mite: " + zones[2].divisionNumbers[3] + "<br />" 
-						+ "Squirt: " + zones[2].divisionNumbers[4] 
-						+ " Peewee: " + zones[2].divisionNumbers[5]
-						+ " Bantam: " + zones[2].divisionNumbers[6] + "<br />" 
-						+ "Midget: " + zones[2].divisionNumbers[7] + "<br />" + "<br />" 
-						+ "Falcons: " + zones[3].geoCode.length + "<br />" 
-						+ "Blastball: " + zones[3].divisionNumbers[0]  
-						+ " Beginner: " + zones[3].divisionNumbers[1] 
-						+ " Novice: " + zones[3].divisionNumbers[2]  
-						+ " Mite: " + zones[3].divisionNumbers[3] + "<br />" 
-						+ "Squirt: " + zones[3].divisionNumbers[4] 
-						+ " Peewee: " + zones[3].divisionNumbers[5]
-						+ " Bantam: " + zones[3].divisionNumbers[6] + "<br />" 
-						+ "Midget: " + zones[3].divisionNumbers[7] + "<br />" + "<br />" 
 						+ "</p>");
 }
 
@@ -455,16 +374,9 @@ function determineZones()
 							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
 							
 						break;
+												
 						case 1:
-							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png');
-						break;
-						
-						case 2:
 							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
-						break;
-
-						case 3:
-							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/ltblue-dot.png');
 						break;
 
 					}
@@ -537,14 +449,12 @@ google.maps.event.addDomListener(window, 'load', initialize);
     <div id="panel">
 	  <input type="file" id="fileInput">
 	  <input type="button" id="mapRegistrations" value="mapRegistrations"  onclick="mapRegistrations();">
-	  <input type="button" id="createLazersZone" value="createLazersZone"  onclick="createLazersZone();">
-	  <input type="button" id="createSaintsZone" value="createSaintsZone"  onclick="createSaintsZone();">
-	  <input type="button" id="createRoyalsZone" value="createRoyalsZone"  onclick="createRoyalsZone();">
-	  <input type="button" id="createFalconsZone" value="createFalconsZone"  onclick="createFalconsZone();">
-	  <input type="button" id="setZoneDone" value="setZoneDone"  onclick="setZoneDone();">
+	  <input type="button" id="createZone1" value="createZone1"  onclick="createZone1();">
+	  <input type="button" id="createZone2" value="createZone2"  onclick="createZone2();">
+	   <input type="button" id="setZoneDone" value="setZoneDone"  onclick="setZoneDone();">
 	  <output id="list"></output>
 	  <p>
-		Download <a href="Master2013.csv" download="Master2013.csv">the registration data to map.</a> 
+		Download <a href="Master2014.csv" download="Master2014.csv">the registration data to map.</a> 
 	  </p>
 
     </div>
