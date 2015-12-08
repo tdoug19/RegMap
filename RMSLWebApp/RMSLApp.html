@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>RMSL Registration Map</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+      #panel {
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        margin-left: -180px;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+	<script src="jquery-2.0.3.min.js"></script>
+	<script src="jquery.csv-0.71.js"></script>
+	<script src="maps.google.polygon.containsLatLng.js"></script>
+
+    <script>
+var poly
+var map;
+
+var polyOptions = {
+		strokeColor: '#000000',
+		strokeOpacity: 1.0,
+		strokeWeight: 3
+	};
+
+var blastball = "2011";
+var beginner_1 = "2010";
+var novice_1 = "2009";
+var novice_2 = "2008";
+var mite_1 = "2007";
+var mite_2 = "2006";
+var squirt_1 = "2005";
+var squirt_2 = "2004";
+var peewee_1 = "2003";
+var peewee_2 = "2002";
+var bantam_1 = "2001";
+var bantam_2 = "2000";
+var midget_1 = "1999";
+var midget_2 = "1998";
+
+
+//Zone Vars
+var zone1 = {
+	active: false, 				//Indicates if we are building that zone or not.
+	coordinates: new Array(),		//Keeps track of the zone coords
+	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
+	coordsCount: 0,				// Keeps track of how many points outline the zone
+	shape: null,							//Polygon representing the zone1.
+	locations: new Array(),		//Keeps track of regs in zone1
+	birthDates: new Array(),
+	divisionNumbers: new Array(),
+	geoCode: new Array,           //Lat and Lng of each registrant of zone 1
+	name: "Zone 1"
+	};
+
+
+var zone2 = {
+	active: false, 				//Indicates if we are building that zone or not.
+	coordinates: new Array(),		//Keeps track of the zone coords
+	boundary: new google.maps.Polyline(polyOptions) ,					//the polyline that contains the boundary 
+	coordsCount: 0,				// Keeps track of how many points outline the zone
+	shape: null,							//Polygon representing the lazers zone.
+	locations: new Array(),		//Keeps track of regs in zone 1
+	birthDates: new Array(),
+	divisionNumbers: new Array(),
+	geoCode: new Array,           //Lat and Lng of each registrant of Zone 1
+	name: "Zone 2"
+	};	
+
+
+	
+var zones = new Array();               //This array will hold each zone info.
+
+var markers = new Array();  //Array to hold the registrant markers
+
+var regLocations = new Array();
+var regBirthDates = new Array();
+var regGeoCode = new Array();        //Lat and Lng of each registrant 
+var regWindow;
+
+
+
+var contentString = "Zone 1 : 0" + 
+					"  Zone 2 : 0" ; 
+
+
+var result = [
+    [], [] // 2d array
+];
+  
+function initialize() {
+	geocoder = new google.maps.Geocoder();
+  
+	var fileInput = document.getElementById('fileInput');
+  
+    var instructions = " Instructions\n" +
+						"Download the registration data to map to your Computer by clicking the link.\n" +
+						"Click Choose File and select the registration file you just downloaded to place the registrants on the map.\n" +
+						"Click mapRegistrations and you will populate the map with registrations.\n\n" +
+						"Click on one of the create Zone buttons and create the zone by " +
+						"clicking and outlining the zone.\n\n" +
+						"When done drawing that zone, click the setZoneDone button.";
+					
+	alert(instructions);
+ 
+	zones[0] = zone1;
+	zones[1] = zone2;
+	
+	
+	//Initialize the count for each division Numbers
+	for (var i=0; i<zones.length; i++)
+	{
+		zones[i].divisionNumbers[0]=0;
+		zones[i].divisionNumbers[1]=0;
+		zones[i].divisionNumbers[2]=0;
+		zones[i].divisionNumbers[3]=0;
+		zones[i].divisionNumbers[4]=0;
+		zones[i].divisionNumbers[5]=0;
+		zones[i].divisionNumbers[6]=0;
+		zones[i].divisionNumbers[7]=0;
+	}
+	
+		
+	//Start with Regina's long lat..
+	var latlng = new google.maps.LatLng(50.4547 , -104.6067);
+	var mapOptions = {
+		zoom: 12,
+		center: latlng
+	}
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+	
+	
+	regWindow = new google.maps.InfoWindow({
+		content: contentString
+	});
+
+	var latlng = new google.maps.LatLng(50.438291, -104.789580);
+	var marker = new google.maps.Marker({
+		position: latlng,
+		map: map,
+		title: 'Reg Info'
+	});
+
+	regWindow.open(map,marker);
+  
+
+	for (var i=0; i<zones.length; i++)
+	{
+		zones[i].boundary.setMap(map);
+	}
+	
+  
+	fileInput.addEventListener('change', function(e) {
+		var file = fileInput.files[0];
+		var reader = new FileReader();
+
+		reader.onload = function(e) {
+			
+			var csv = event.target.result;
+			result = $.csv.toArrays(csv);
+			
+			markRegistrations();
+		}
+		reader.readAsText(file);  
+	});
+
+	
+	// Add a listener for the click event
+	google.maps.event.addListener(map, 'click', addLatLng);
+}
+
+/**
+ * Handles click events on a map, and adds a new point to the Polyline.
+ * @param {google.maps.MouseEvent} event
+ */
+function addLatLng(event) 
+{
+	for (var i=0; i<zones.length; i++)
+	{
+		if(zones[i].active)
+		{
+	
+			var path = zones[i].boundary.getPath();
+
+			// Because path is an MVCArray, we can simply append a new coordinate
+			// and it will automatically appear.
+	-   	path.push(event.latLng);
+			// Add a new marker at the new plotted point on the polyline.
+			if(zones[i].coordsCount==0)
+			{
+				var marker = new google.maps.Marker({
+				position: event.latLng,
+				title: '#' + path.getLength(),
+				map: map
+				});
+			}
+			
+			//zones[i].coordinates[zones[i].coordsCount] = new google.maps.LatLng(event.latLng.pb, event.latLng.qb);
+			zones[i].coordinates[zones[i].coordsCount] = new google.maps.LatLng(event.latLng.lat(), event.latLng.lng());
+			
+			++zones[i].coordsCount;
+		}
+    }
+	
+}
+
+function createZone1()
+{
+	zones[0].active = true;
+	
+}
+
+function createZone2()
+{
+	zones[1].active = true;
+	
+}
+
+
+
+function setZoneDone()
+{
+	for (var i=0; i<zones.length; i++)
+	{
+	
+		if(zones[i].active)
+		{
+			//Set the last location to the first to complete the polygon
+			zones[i].coordinates[zones[i].coordsCount-1] = zones[i].coordinates[0];
+			// Construct the polygon.
+			
+			
+			switch(i)
+			{
+				case 0:
+					zones[i].shape = new google.maps.Polygon({
+						paths: zones[i].coordinates,
+						strokeColor: '#FFFF00',
+						strokeOpacity: 0.8,
+						strokeWeight: 3,
+						fillColor: '#FFFF00',
+						fillOpacity: 0.15
+						});
+				break;
+				
+				case 1:
+					zones[i].shape = new google.maps.Polygon({
+						paths: zones[i].coordinates,
+						strokeColor: '#0000FF',
+						strokeOpacity: 0.8,
+						strokeWeight: 3,
+						fillColor: '#0000FF',
+						fillOpacity: 0.15
+						});
+
+				break;
+
+				
+			}
+			
+			
+
+			zones[i].shape.setMap(map); 
+			determineZones();
+			zones[i].active = false;
+			zones[i].boundary.setMap(null);
+		}
+
+	}
+	
+	
+	regWindow.setContent("<p>" + ":Zone1 " + zones[0].geoCode.length + "<br />" 
+						+ "Blastball: " + zones[0].divisionNumbers[0]  
+						+ " Beginner: " + zones[0].divisionNumbers[1]  
+						+ " Novice: " + zones[0].divisionNumbers[2]  
+						+ " Mite: " + zones[0].divisionNumbers[3] + "<br />" 
+						+ "Squirt: " + zones[0].divisionNumbers[4]  
+						+ " Peewee: " + zones[0].divisionNumbers[5] 
+						+ " Bantam: " + zones[0].divisionNumbers[6] + "<br />"
+						+ "Midget: " + zones[0].divisionNumbers[7] + "<br />" + "<br />" 
+						+ "Zone2: " + zones[1].geoCode.length + "<br />" 
+						+ "Blastball: " + zones[1].divisionNumbers[0]  
+						+ " Beginner: " + zones[1].divisionNumbers[1] 
+						+ " Novice: " + zones[1].divisionNumbers[2]  
+						+ " Mite: " + zones[1].divisionNumbers[3] + "<br />" 
+						+ "Squirt: " + zones[1].divisionNumbers[4] 
+						+ " Peewee: " + zones[1].divisionNumbers[5]
+						+ " Bantam: " + zones[1].divisionNumbers[6] + "<br />" 
+						+ "Midget: " + zones[1].divisionNumbers[7] + "<br />" + "<br />" 
+						+ "</p>");
+}
+
+function determineZones() 
+{
+	for (var i=0; i<zones.length; i++)  //4 zones
+	{
+		if(zones[i].active)
+		{
+			var j = 0;  //keeps track of index into each zones info
+		
+			for (var k = 0; k < regGeoCode.length; k++)  //Check each geocode found.
+			{
+				var bits = regGeoCode[k].split(/,\s*/);
+			
+				if( zones[i].shape.containsLatLng(parseFloat(bits[0]),parseFloat(bits[1])))
+				{
+					//Here we have determined what zone they are in so we save off the geocode
+					zones[i].geoCode[j] = regGeoCode[k];
+					zones[i].birthDates[j] = regBirthDates[k];
+					
+					switch(zones[i].birthDates[j])
+					{
+						case blastball:
+							zones[i].divisionNumbers[0]++;
+						
+						break;
+
+						case 	beginner_1:
+							zones[i].divisionNumbers[1]++;
+						break;
+
+						case 	novice_1:
+						case 	novice_2:
+							zones[i].divisionNumbers[2]++;
+						break;
+							
+						case 	mite_1:
+						case	mite_2:
+							zones[i].divisionNumbers[3]++;
+						
+						break;
+						
+						case 	squirt_1:
+						case 	squirt_2:
+							zones[i].divisionNumbers[4]++;
+						break;
+						
+						case 	peewee_1:
+						case	peewee_2:
+							zones[i].divisionNumbers[5]++;
+						break;
+						
+						case 	bantam_1:
+						case	bantam_2:
+							zones[i].divisionNumbers[6]++;						
+						break;
+						
+						case 	midget_1:
+						case	midget_2:
+							zones[i].divisionNumbers[7]++;						
+							
+						break;
+					}
+					
+					
+					++j;
+					
+					switch(i)
+					{
+						case 0:
+							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/yellow-dot.png');
+							
+						break;
+												
+						case 1:
+							markers[k].setIcon('http://maps.google.com/mapfiles/ms/icons/blue-dot.png');
+						break;
+
+					}
+				}
+					
+
+			}
+		}
+	}
+}
+
+
+function markRegistrations()
+{
+	for(i=0; i<result.length; i++)
+	{
+		regLocations[i] = result[i][0];
+		regBirthDates[i] = result[i][1];
+		regGeoCode[i] = result[i][2];
+	}
+	
+}
+
+function mapRegistrations()
+{
+	//Strip out and save the geocode
+	for(i=0; i<regGeoCode.length; i++)
+	//for(i=0; i<1; i++)
+	{
+		var bits = regGeoCode[i].split(/,\s*/);
+		myLatlng = new google.maps.LatLng(parseFloat(bits[0]), parseFloat(bits[1]));
+
+		var marker = new google.maps.Marker({
+            position: myLatlng,
+			icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+        });
+		
+		markers.push(marker);
+		marker.setMap(map);
+	}
+
+	//Strip out the Birth Dates
+	for(i=0; i<regBirthDates.length; i++)
+	{
+		var bits = regBirthDates[i].split("/");
+		if(parseFloat(bits[0]) > 1990)  //In case just the birth year is given
+		{
+			regBirthDates[i] = bits[0];
+		}
+		else if(parseFloat(bits[2]) > 1990) //In case the birth is mm/dd/yy
+		{
+			regBirthDates[i] = bits[2];
+		}
+		else if(bits[0] == "")
+		{
+			regBirthDates[i]  = "2000";  //Arbitrary
+		}
+		
+	}
+	
+} 
+
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+  </head>
+  <body>
+    <div id="panel">
+	  <input type="file" id="fileInput">
+	  <input type="button" id="mapRegistrations" value="mapRegistrations"  onclick="mapRegistrations();">
+	  <input type="button" id="createZone1" value="createZone1"  onclick="createZone1();">
+	  <input type="button" id="createZone2" value="createZone2"  onclick="createZone2();">
+	   <input type="button" id="setZoneDone" value="setZoneDone"  onclick="setZoneDone();">
+	  <output id="list"></output>
+	  <p>
+		Download <a href="Master2014.csv" download="Master2014.csv">the registration data to map.</a> 
+	  </p>
+
+    </div>
+    <div id="map-canvas"></div>
+  </body>
+</html>
