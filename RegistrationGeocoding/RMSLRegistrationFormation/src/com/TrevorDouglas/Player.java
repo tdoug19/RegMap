@@ -3,6 +3,7 @@
  */
 package com.TrevorDouglas;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.google.code.geocoder.model.LatLng;
@@ -14,14 +15,14 @@ import com.google.code.geocoder.model.LatLng;
 public class Player {
 	private String name;
 	private String address;
-	private Date dateOfBirth;
+	private Calendar dateOfBirth;
 	private double longitude, latitude;
 	private LatLng latitudeLongitude;
 	private String postalCode;
 	
 	
 	
-	public Player(String name, String address, Date dateOfBirth, String postalCode)
+	public Player(String name, String address, Calendar dateOfBirth, String postalCode)
 	{
 		
 		this.name = name;
@@ -31,7 +32,7 @@ public class Player {
 		
 	}
 
-	public Player(String name, String address, Date dateOfBirth)
+	public Player(String name, String address, Calendar dateOfBirth)
 	{
 		
 		this.name = name;
@@ -46,7 +47,7 @@ public class Player {
 			
 	}
 	
-	public Date getDate()	{
+	public Calendar getDate()	{
 		return dateOfBirth;
 	}
 	

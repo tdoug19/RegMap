@@ -6,10 +6,12 @@ package com.TrevorDouglas;
 import java.io.*;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Locale;
 
 import com.google.code.geocoder.model.LatLng;
@@ -207,10 +209,11 @@ public class Utilities {
 		{
 			String[] ar=s.split(",");
 			
-			DateFormat format = new SimpleDateFormat("yyyy", Locale.ENGLISH);
-			Date date = format.parse(ar[2]);
-			Player p = new Player(ar[0] + " " + ar[1], ar[7], date);
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+			cal.setTime(sdf.parse(ar[4]));// all done
 
+			Player p = new Player(ar[0] + " " + ar[1], ar[7], cal);
 			
 			if(ar.length > 12)
 			
@@ -242,11 +245,11 @@ public class Utilities {
 		{
 			String[] ar=s.split(",");
 			
-			DateFormat format = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-			Date date = format.parse(ar[4]);
-
-			Player p = new Player(ar[1] + " " + ar[2], ar[7], date, ar[8]);
+			Calendar cal = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+			cal.setTime(sdf.parse(ar[4]));// all done
 			
+			Player p = new Player(ar[1] + " " + ar[2], ar[7], cal);
 		
 			if(ar.length > 16)
 			
@@ -274,27 +277,6 @@ public class Utilities {
 		
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		private static final String CSV_SEPARATOR = ",";
 		private static void writeToCSV(String fileName, ArrayList<Player> playerList)
 		{
@@ -307,7 +289,7 @@ public class Utilities {
 		             
 		            oneLine.append(player.getName());
 		            oneLine.append(CSV_SEPARATOR);
-		            oneLine.append(player.getDate());
+		            oneLine.append(player.getDate().get(Calendar.YEAR));
 		            oneLine.append(CSV_SEPARATOR);
 		            oneLine.append(player.getAddress());
 		            oneLine.append(CSV_SEPARATOR);
