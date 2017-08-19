@@ -48,8 +48,7 @@ public class UtilsGeo {
 		{
 			if(playerList.get(i).getLatLng() == null)
 			{
-				Float[] coords = performGeoCoding(playerList.get(i).getAddress() + ", " + 
-						"Regina");	
+				Float[] coords = performGeoCoding(playerList.get(i).getAddress() );	
 				if(coords != null)
 				{
 				
@@ -91,6 +90,10 @@ public class UtilsGeo {
 		      coords[0] = latitudeLongitude.getLat().floatValue();
 		      coords[1] = latitudeLongitude.getLng().floatValue();
 		      return coords;
+		    }
+		    else
+		    {
+		    	System.out.println("Prob" +  geocoderResponse.getStatus());
 		    }
 		  } catch (IOException ex) {
 		    ex.printStackTrace();

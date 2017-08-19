@@ -246,10 +246,10 @@ public class Utilities {
 			String[] ar=s.split(",");
 			
 			Calendar cal = Calendar.getInstance();
-			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 			cal.setTime(sdf.parse(ar[4]));// all done
-			
-			Player p = new Player(ar[1] + " " + ar[2], ar[7], cal);
+			String addr = new String(ar[6] + ',' + ar[7]);
+			Player p = new Player(ar[1] + " " + ar[2], addr, cal);
 		
 			if(ar.length > 16)
 			
@@ -287,17 +287,24 @@ public class Utilities {
 		        {
 		        	StringBuffer oneLine = new StringBuffer();
 		             
-		            oneLine.append(player.getName());
+		        	oneLine.append(player.getAddress());
 		            oneLine.append(CSV_SEPARATOR);
+		        	//oneLine.append(player.getName());
+		            //oneLine.append(CSV_SEPARATOR);
 		            oneLine.append(player.getDate().get(Calendar.YEAR));
 		            oneLine.append(CSV_SEPARATOR);
-		            oneLine.append(player.getAddress());
-		            oneLine.append(CSV_SEPARATOR);
+		            
 		            if (player.getLatLng() != null)
 		            {
+		            	//oneLine.append(player.getLatLng().getLat());
+		            	//oneLine.append(CSV_SEPARATOR);
+		            	//oneLine.append(player.getLatLng().getLng());
+		            	oneLine.append('"');
 		            	oneLine.append(player.getLatLng().getLat());
-		            	oneLine.append(CSV_SEPARATOR);
+		            	oneLine.append(',');
 		            	oneLine.append(player.getLatLng().getLng());
+		            	oneLine.append('"');
+		            	
 		            }
 		            
              
