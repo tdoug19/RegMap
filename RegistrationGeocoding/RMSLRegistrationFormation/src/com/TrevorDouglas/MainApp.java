@@ -9,7 +9,7 @@ public class MainApp {
 		
 		Utilities u = new Utilities();
 		ArrayList<Player> playerList = new ArrayList<Player>();
-		u.readRegistrantsFromFile("2017Registrations.csv", playerList);
+		u.readRegistrantsFromFile("2017Registrations3.csv", playerList);
 		
 		UtilsGeo ug = new UtilsGeo();
 		
